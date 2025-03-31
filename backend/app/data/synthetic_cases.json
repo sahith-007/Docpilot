@@ -1,0 +1,124 @@
+{
+  "cases": [
+    {
+      "id": "case-marlowe-001",
+      "patient_name": "Elaine Marlowe",
+      "mrn": "SYN-10042",
+      "age": 72,
+      "sex": "female",
+      "primary_concern": "progressive dyspnea, edema, and hypoxemia",
+      "risk_level": "high",
+      "status": "active",
+      "admitted_at": "2026-04-18T08:15:00Z",
+      "notes": [
+        {
+          "id": "note-marlowe-ed-001",
+          "note_type": "ed_note",
+          "author_role": "emergency physician",
+          "note_date": "2026-04-18",
+          "title": "Emergency Department Assessment",
+          "body": "Patient reports four days of progressive dyspnea, orthopnea, and bilateral leg swelling. Oxygen saturation was 88 percent on room air and improved to 94 percent on 2 L nasal cannula. Exam shows bibasilar crackles, elevated jugular venous pressure, and 2+ pitting edema to both shins.\nChest x-ray describes pulmonary vascular congestion with small bilateral pleural effusions. No focal lobar consolidation was described. Initial ECG shows sinus rhythm without acute ischemic ST changes."
+        },
+        {
+          "id": "note-marlowe-labs-002",
+          "note_type": "lab_review",
+          "author_role": "hospitalist",
+          "note_date": "2026-04-18",
+          "title": "Admission Lab Review",
+          "body": "BNP is elevated at 1420 pg/mL. Creatinine is 1.5 mg/dL compared with synthetic baseline near 1.1. Sodium is 132 mmol/L. High sensitivity troponin is 18 then 19 with no dynamic rise. Procalcitonin is low at 0.04.\nThe lab pattern supports volume overload with mild kidney injury. The flat troponin trend and non-ischemic ECG make acute coronary syndrome less likely in this synthetic case."
+        },
+        {
+          "id": "note-marlowe-plan-003",
+          "note_type": "progress_note",
+          "author_role": "attending physician",
+          "note_date": "2026-04-19",
+          "title": "Hospital Day 1 Plan",
+          "body": "Assessment favors acute decompensated heart failure as the main driver of dyspnea given orthopnea, edema, crackles, vascular congestion on chest x-ray, and BNP 1420. Pneumonia is less supported because there is no fever, no focal infiltrate, and procalcitonin is low.\nPlan is IV furosemide 40 mg twice daily, strict intake and output, daily weights, potassium and magnesium repletion, and repeat basic metabolic panel this evening. Avoid routine IV fluids unless hypotension develops."
+        },
+        {
+          "id": "note-marlowe-nursing-004",
+          "note_type": "nursing_note",
+          "author_role": "registered nurse",
+          "note_date": "2026-04-19",
+          "title": "Response To Diuresis",
+          "body": "After two IV furosemide doses, urine output was 1.8 L over the shift and the patient reported easier breathing while lying flat. Oxygen was weaned from 2 L to 1 L nasal cannula with saturation 95 percent. Lower extremity edema remains present but improved from admission.\nPatient understands fluid restriction and has been using call light before ambulation."
+        }
+      ]
+    },
+    {
+      "id": "case-ibarra-002",
+      "patient_name": "Jon Ibarra",
+      "mrn": "SYN-10077",
+      "age": 58,
+      "sex": "male",
+      "primary_concern": "diabetic foot infection with hyperglycemia",
+      "risk_level": "watch",
+      "status": "active",
+      "admitted_at": "2026-05-02T11:30:00Z",
+      "notes": [
+        {
+          "id": "note-ibarra-ed-005",
+          "note_type": "ed_note",
+          "author_role": "emergency physician",
+          "note_date": "2026-05-02",
+          "title": "Foot Wound Intake",
+          "body": "Patient with type 2 diabetes presents with three days of left plantar foot redness, warmth, swelling, and drainage from a shallow ulcer below the first metatarsal head. Temperature is 100.6 F, heart rate 104, and blood pressure is stable. No crepitus is felt on exam.\nWhite blood cell count is 15.8 K/uL and lactate is 1.7 mmol/L. Plain film shows soft tissue swelling without gas. Initial impression is diabetic foot infection with cellulitis."
+        },
+        {
+          "id": "note-ibarra-antibiotics-006",
+          "note_type": "pharmacy_note",
+          "author_role": "clinical pharmacist",
+          "note_date": "2026-05-02",
+          "title": "Antimicrobial Review",
+          "body": "Empiric vancomycin plus cefepime started for diabetic foot infection while cultures are pending. Renal function is acceptable for standard initial dosing with daily monitoring. Recommend narrowing therapy when wound culture results and clinical response are available.\nNo allergy history is documented in the synthetic chart."
+        },
+        {
+          "id": "note-ibarra-mri-007",
+          "note_type": "imaging_report",
+          "author_role": "radiology",
+          "note_date": "2026-05-03",
+          "title": "Left Foot MRI",
+          "body": "MRI left foot shows plantar soft tissue ulceration and cellulitis near the first metatarsal head. There is no marrow replacement, cortical destruction, or abscess. Findings do not support osteomyelitis in this synthetic case.\nMild diffuse soft tissue edema is present."
+        },
+        {
+          "id": "note-ibarra-endocrine-008",
+          "note_type": "consult_note",
+          "author_role": "endocrinology",
+          "note_date": "2026-05-03",
+          "title": "Glucose Management",
+          "body": "A1c is 10.2 percent and admission glucose values ranged from 260 to 340 mg/dL. Patient reports missed basal insulin several times per week because of night-shift schedule changes.\nRecommend basal insulin glargine 22 units nightly, correctional lispro with meals, diabetes education, and discharge planning that matches insulin timing to the patient's work schedule."
+        }
+      ]
+    },
+    {
+      "id": "case-singh-003",
+      "patient_name": "Priya Singh",
+      "mrn": "SYN-10103",
+      "age": 66,
+      "sex": "female",
+      "primary_concern": "syncope after antihypertensive medication change",
+      "risk_level": "stable",
+      "status": "review",
+      "admitted_at": "2026-05-19T16:40:00Z",
+      "notes": [
+        {
+          "id": "note-singh-hpi-009",
+          "note_type": "admission_note",
+          "author_role": "resident physician",
+          "note_date": "2026-05-19",
+          "title": "Syncope Admission HPI",
+          "body": "Patient had a brief syncopal episode while standing in the kitchen. She recently increased lisinopril-hydrochlorothiazide dose after home blood pressure readings were high. Orthostatic vitals are positive in the emergency department.\nNo chest pain, palpitations, focal neurologic deficit, or seizure-like activity is reported. CT head is negative for acute findings."
+        },
+        {
+          "id": "note-singh-telemetry-010",
+          "note_type": "telemetry_note",
+          "author_role": "cardiology fellow",
+          "note_date": "2026-05-20",
+          "title": "Telemetry Review",
+          "body": "Telemetry overnight shows sinus rhythm with rare premature atrial contractions. No high-grade AV block, sustained tachyarrhythmia, or pauses were captured. Troponin is negative twice.\nSyncope appears more consistent with orthostatic hypotension after medication change than arrhythmia based on available synthetic evidence."
+        }
+      ]
+    }
+  ]
+}
+
