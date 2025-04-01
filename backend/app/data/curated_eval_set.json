@@ -1,0 +1,61 @@
+{
+  "items": [
+    {
+      "id": "eval-001",
+      "case_id": "case-marlowe-001",
+      "question": "What evidence supports heart failure as the main driver of dyspnea?",
+      "note_types": ["ed_note", "lab_review", "progress_note"],
+      "expected_evidence": ["note-marlowe-ed-001", "note-marlowe-labs-002", "note-marlowe-plan-003"],
+      "acceptance_threshold": 67
+    },
+    {
+      "id": "eval-002",
+      "case_id": "case-marlowe-001",
+      "question": "Which findings make acute coronary syndrome less likely?",
+      "note_types": ["ed_note", "lab_review"],
+      "expected_evidence": ["note-marlowe-ed-001", "note-marlowe-labs-002"],
+      "acceptance_threshold": 67
+    },
+    {
+      "id": "eval-003",
+      "case_id": "case-marlowe-001",
+      "question": "What changed after diuresis with IV furosemide?",
+      "note_types": ["nursing_note", "progress_note"],
+      "expected_evidence": ["note-marlowe-plan-003", "note-marlowe-nursing-004"],
+      "acceptance_threshold": 67
+    },
+    {
+      "id": "eval-004",
+      "case_id": "case-ibarra-002",
+      "question": "What evidence suggests diabetic foot infection without osteomyelitis?",
+      "note_types": ["ed_note", "imaging_report"],
+      "expected_evidence": ["note-ibarra-ed-005", "note-ibarra-mri-007"],
+      "acceptance_threshold": 67
+    },
+    {
+      "id": "eval-005",
+      "case_id": "case-ibarra-002",
+      "question": "What antimicrobial plan was documented for the foot infection?",
+      "note_types": ["pharmacy_note"],
+      "expected_evidence": ["note-ibarra-antibiotics-006"],
+      "acceptance_threshold": 100
+    },
+    {
+      "id": "eval-006",
+      "case_id": "case-ibarra-002",
+      "question": "What glucose management issue and plan were raised?",
+      "note_types": ["consult_note"],
+      "expected_evidence": ["note-ibarra-endocrine-008"],
+      "acceptance_threshold": 100
+    },
+    {
+      "id": "eval-007",
+      "case_id": "case-singh-003",
+      "question": "Why is orthostatic hypotension favored over arrhythmia for syncope?",
+      "note_types": ["admission_note", "telemetry_note"],
+      "expected_evidence": ["note-singh-hpi-009", "note-singh-telemetry-010"],
+      "acceptance_threshold": 67
+    }
+  ]
+}
+
