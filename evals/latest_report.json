@@ -1,0 +1,113 @@
+{
+  "run_id": "a4b19bff-f884-4b77-95a1-f29f33254766",
+  "label": "retrieval-filtered-demo",
+  "total": 7,
+  "accepted": 7,
+  "acceptance_rate": 100,
+  "improvement_from_baseline": 49,
+  "results": [
+    {
+      "id": "eval-001",
+      "case_id": "case-marlowe-001",
+      "question": "What evidence supports heart failure as the main driver of dyspnea?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-marlowe-ed-001",
+        "note-marlowe-labs-002",
+        "note-marlowe-plan-003"
+      ],
+      "matched_evidence": [
+        "note-marlowe-plan-003",
+        "note-marlowe-labs-002",
+        "note-marlowe-ed-001"
+      ]
+    },
+    {
+      "id": "eval-002",
+      "case_id": "case-marlowe-001",
+      "question": "Which findings make acute coronary syndrome less likely?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-marlowe-ed-001",
+        "note-marlowe-labs-002"
+      ],
+      "matched_evidence": [
+        "note-marlowe-labs-002",
+        "note-marlowe-ed-001"
+      ]
+    },
+    {
+      "id": "eval-003",
+      "case_id": "case-marlowe-001",
+      "question": "What changed after diuresis with IV furosemide?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-marlowe-plan-003",
+        "note-marlowe-nursing-004"
+      ],
+      "matched_evidence": [
+        "note-marlowe-nursing-004",
+        "note-marlowe-plan-003"
+      ]
+    },
+    {
+      "id": "eval-004",
+      "case_id": "case-ibarra-002",
+      "question": "What evidence suggests diabetic foot infection without osteomyelitis?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-ibarra-ed-005",
+        "note-ibarra-mri-007"
+      ],
+      "matched_evidence": [
+        "note-ibarra-ed-005",
+        "note-ibarra-mri-007"
+      ]
+    },
+    {
+      "id": "eval-005",
+      "case_id": "case-ibarra-002",
+      "question": "What antimicrobial plan was documented for the foot infection?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-ibarra-antibiotics-006"
+      ],
+      "matched_evidence": [
+        "note-ibarra-antibiotics-006"
+      ]
+    },
+    {
+      "id": "eval-006",
+      "case_id": "case-ibarra-002",
+      "question": "What glucose management issue and plan were raised?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-ibarra-endocrine-008"
+      ],
+      "matched_evidence": [
+        "note-ibarra-endocrine-008"
+      ]
+    },
+    {
+      "id": "eval-007",
+      "case_id": "case-singh-003",
+      "question": "Why is orthostatic hypotension favored over arrhythmia for syncope?",
+      "accepted": true,
+      "score": 100,
+      "expected_evidence": [
+        "note-singh-hpi-009",
+        "note-singh-telemetry-010"
+      ],
+      "matched_evidence": [
+        "note-singh-telemetry-010",
+        "note-singh-hpi-009"
+      ]
+    }
+  ]
+}
