@@ -84,3 +84,11 @@ def ensure_runtime_schema() -> None:
             connection.execute(
                 text("ALTER TABLE clinical_answers ADD COLUMN limits_json TEXT DEFAULT '[]'")
             )
+
+    if "reviewer_feedback" in table_names:
+        feedback_columns = {column["name"] for column in inspector.get_columns("reviewer_feedback")}
+        if "updated_at" not in feedback_columns:
+            with engine.begin() as connection:
+                connection.execute(
+                    text("ALTER TABLE reviewer_feedback ADD COLUMN updated_at DATETIME")
+                )

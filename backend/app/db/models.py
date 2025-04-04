@@ -111,6 +111,7 @@ class ClinicalAnswer(Base):
 
 class ReviewerFeedback(Base):
     __tablename__ = "reviewer_feedback"
+    __table_args__ = (UniqueConstraint("answer_id", "reviewer_id", name="uq_answer_reviewer_feedback"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     answer_id: Mapped[str] = mapped_column(ForeignKey("clinical_answers.id"), index=True)
@@ -119,6 +120,11 @@ class ReviewerFeedback(Base):
     reason: Mapped[str] = mapped_column(String(120))
     notes: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
     answer: Mapped[ClinicalAnswer] = relationship(back_populates="feedback_items")
 

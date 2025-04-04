@@ -71,6 +71,19 @@ export type AskResponse = {
   limits: string[];
 };
 
+export type FeedbackStatus = "accepted" | "review" | "rejected";
+
+export type FeedbackResponse = {
+  id: string;
+  answer_id: string;
+  status: FeedbackStatus;
+  verdict: string;
+  reason: string;
+  notes: string;
+  updated_at: string;
+  message: string;
+};
+
 export type ChatMessage = {
   id: string;
   role: "user" | "assistant";
@@ -80,6 +93,9 @@ export type ChatMessage = {
   confidence?: string | null;
   model?: string | null;
   provider_used?: string | null;
+  feedback_status?: FeedbackStatus | null;
+  feedback_message?: string | null;
+  feedback_updated_at?: string | null;
   evidence: EvidenceChunk[];
   citations: Citation[];
   limits: string[];

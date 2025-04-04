@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 
 class UserRead(BaseModel):
@@ -134,6 +134,9 @@ class ChatMessage(BaseModel):
     confidence: str | None = None
     model: str | None = None
     provider_used: str | None = None
+    feedback_status: str | None = None
+    feedback_message: str | None = None
+    feedback_updated_at: datetime | None = None
     evidence: list[EvidenceChunk] = []
     citations: list[CitationRead] = []
     limits: list[str] = []
@@ -162,19 +165,30 @@ class DebugConfigResponse(BaseModel):
 
 class FeedbackRequest(BaseModel):
     answer_id: str
-    verdict: str = Field(pattern="^(accepted|needs_review|rejected)$")
-    reason: str = Field(pattern="^(grounded|missing_evidence|unsupported_claim|wrong_context|unclear)$")
+    status: str | None = Field(default=None, pattern="^(accepted|review|rejected)$")
+    verdict: str | None = Field(default=None, pattern="^(accepted|needs_review|rejected)$")
+    reason: str | None = Field(
+        default=None,
+        pattern="^(grounded|missing_evidence|unsupported_claim|wrong_context|unclear)$",
+    )
     notes: str = Field(default="", max_length=600)
+
+    @model_validator(mode="after")
+    def require_feedback_decision(self) -> "FeedbackRequest":
+        if self.status is None and self.verdict is None:
+            raise ValueError("Feedback status is required.")
+        return self
 
 
 class FeedbackResponse(BaseModel):
     id: str
     answer_id: str
+    status: str
     verdict: str
     reason: str
     notes: str
-
-    model_config = {"from_attributes": True}
+    updated_at: datetime
+    message: str
 
 
 class BenchmarkItemResult(BaseModel):

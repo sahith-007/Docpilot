@@ -16,6 +16,7 @@ from app.schemas import (
     SummaryResponse,
 )
 from app.services.openai_client import AnswerDraft, generate_openai_answer
+from app.services.feedback import latest_feedback_for_answer, message_for_status, status_from_verdict
 from app.services.retrieval import search_evidence
 
 logger = get_logger(__name__)
@@ -129,6 +130,8 @@ def conversation_for_case(db: Session, user_id: str, case_id: str) -> Conversati
         )
         if question.answer:
             evidence = _evidence_from_json(question.answer.evidence_json)
+            feedback = latest_feedback_for_answer(db, user_id, question.answer.id)
+            feedback_status = status_from_verdict(feedback.verdict) if feedback else None
             messages.append(
                 ChatMessage(
                     id=question.answer.id,
@@ -139,6 +142,9 @@ def conversation_for_case(db: Session, user_id: str, case_id: str) -> Conversati
                     confidence=question.answer.confidence,
                     model=question.answer.model_name,
                     provider_used=_provider_from_model(question.answer.model_name),
+                    feedback_status=feedback_status,
+                    feedback_message=message_for_status(feedback_status) if feedback_status else None,
+                    feedback_updated_at=feedback.updated_at if feedback else None,
                     evidence=evidence,
                     citations=_citations_from_evidence(evidence),
                     limits=_limits_from_json(question.answer.limits_json),

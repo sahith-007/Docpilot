@@ -5,6 +5,8 @@ import type {
   ClinicalCase,
   ClinicalCaseDetail,
   ConversationResponse,
+  FeedbackResponse,
+  FeedbackStatus,
   SummaryResponse,
   User
 } from "./types";
@@ -141,15 +143,14 @@ export const api = {
       }
     ];
   },
-  feedback(token: string, answerId: string, verdict: string, reason: string, notes = "") {
-    return request(
+  feedback(token: string, answerId: string, status: FeedbackStatus, notes = "") {
+    return request<FeedbackResponse>(
       "/feedback",
       {
         method: "POST",
         body: JSON.stringify({
           answer_id: answerId,
-          verdict,
-          reason,
+          status,
           notes
         })
       },

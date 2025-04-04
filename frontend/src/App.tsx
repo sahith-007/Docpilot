@@ -28,6 +28,7 @@ import type {
   ChatMessage,
   ClinicalCase,
   ClinicalCaseDetail,
+  FeedbackStatus,
   SummaryResponse,
   User
 } from "./types";
@@ -35,6 +36,13 @@ import type {
 type Session = {
   token: string;
   user: User;
+};
+
+type FeedbackUiState = {
+  status?: FeedbackStatus | null;
+  message?: string;
+  saving?: FeedbackStatus | null;
+  error?: string;
 };
 
 type View = "summary" | "timeline" | "clinical" | "notes" | "benchmarks";
@@ -69,7 +77,7 @@ export default function App() {
   const [benchmarking, setBenchmarking] = useState(false);
   const [error, setError] = useState("");
   const [authNotice, setAuthNotice] = useState("");
-  const [feedbackState, setFeedbackState] = useState<Record<string, string>>({});
+  const [feedbackState, setFeedbackState] = useState<Record<string, FeedbackUiState>>({});
 
   useEffect(() => {
     if (!session) return;
@@ -170,13 +178,41 @@ export default function App() {
     }
   }
 
-  async function submitFeedback(answerId: string, verdict: string, reason: string) {
+  async function submitFeedback(answerId: string, status: FeedbackStatus) {
     if (!session) return;
 
-    setFeedbackState((current) => ({ ...current, [answerId]: "Saving review..." }));
+    const previousState = feedbackState[answerId];
+    setFeedbackState((current) => ({
+      ...current,
+      [answerId]: {
+        ...current[answerId],
+        saving: status,
+        error: ""
+      }
+    }));
     try {
-      await api.feedback(session.token, answerId, verdict, reason);
-      setFeedbackState((current) => ({ ...current, [answerId]: "Review saved" }));
+      const response = await api.feedback(session.token, answerId, status);
+      setFeedbackState((current) => ({
+        ...current,
+        [answerId]: {
+          status: response.status,
+          message: response.message,
+          saving: null,
+          error: ""
+        }
+      }));
+      setChatMessages((current) =>
+        current.map((message) =>
+          message.answer_id === answerId
+            ? {
+                ...message,
+                feedback_status: response.status,
+                feedback_message: response.message,
+                feedback_updated_at: response.updated_at
+              }
+            : message
+        )
+      );
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         clearSession("Your session expired. Please sign in again.");
@@ -184,7 +220,11 @@ export default function App() {
       }
       setFeedbackState((current) => ({
         ...current,
-        [answerId]: err instanceof Error ? err.message : "Review failed"
+        [answerId]: {
+          ...previousState,
+          saving: null,
+          error: err instanceof Error ? err.message : "Review failed"
+        }
       }));
     }
   }
@@ -628,10 +668,10 @@ function ChatPanel({
   suggestedQuestions
 }: {
   asking: boolean;
-  feedbackState: Record<string, string>;
+  feedbackState: Record<string, FeedbackUiState>;
   loading: boolean;
   messages: ChatMessage[];
-  onFeedback: (answerId: string, verdict: string, reason: string) => void;
+  onFeedback: (answerId: string, status: FeedbackStatus) => void;
   onQuestionChange: (value: string) => void;
   onSubmit: (event: FormEvent) => void;
   onTextareaKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -664,7 +704,7 @@ function ChatPanel({
         ) : (
           messages.map((message) => (
             <ChatMessageCard
-              feedbackState={message.answer_id ? feedbackState[message.answer_id] : ""}
+              feedbackState={message.answer_id ? feedbackState[message.answer_id] : undefined}
               key={message.id}
               message={message}
               onFeedback={onFeedback}
@@ -704,11 +744,16 @@ function ChatMessageCard({
   message,
   onFeedback
 }: {
-  feedbackState?: string;
+  feedbackState?: FeedbackUiState;
   message: ChatMessage;
-  onFeedback: (answerId: string, verdict: string, reason: string) => void;
+  onFeedback: (answerId: string, status: FeedbackStatus) => void;
 }) {
   const isAssistant = message.role === "assistant";
+  const activeFeedback = feedbackState?.status ?? message.feedback_status ?? null;
+  const feedbackMessage = feedbackState?.message ?? message.feedback_message ?? "";
+  const feedbackError = feedbackState?.error ?? "";
+  const savingFeedback = feedbackState?.saving ?? null;
+  const limitationItems = formatLimitations(message.limits);
 
   return (
     <div className={`message-row ${message.role}`}>
@@ -718,17 +763,21 @@ function ChatMessageCard({
             <span className={`confidence ${message.confidence ?? "medium"}`}>
               {message.confidence ?? "medium"}
             </span>
-            <span>{message.model ?? "model unavailable"}</span>
+            <span>{getAssistantLabel(message.model, message.provider_used === "demo")}</span>
             <span>{message.evidence.length} sources</span>
           </div>
         )}
 
         <p>{message.content}</p>
 
-        {isAssistant && message.limits.length > 0 && (
+        {isAssistant && limitationItems.length > 0 && (
           <div className="limits">
             <AlertTriangle size={16} aria-hidden="true" />
-            {message.limits.join(" ")}
+            <ul>
+              {limitationItems.map((limit) => (
+                <li key={limit}>{limit}</li>
+              ))}
+            </ul>
           </div>
         )}
 
@@ -761,28 +810,50 @@ function ChatMessageCard({
           <>
             <div className="feedback-actions">
               <button
-                onClick={() => onFeedback(message.answer_id!, "accepted", "grounded")}
+                className={activeFeedback === "accepted" ? "selected" : ""}
+                onClick={() => onFeedback(message.answer_id!, "accepted")}
+                disabled={savingFeedback === "accepted"}
                 type="button"
               >
-                <CheckCircle2 size={16} />
+                {savingFeedback === "accepted" ? (
+                  <Loader2 className="spin" size={16} />
+                ) : (
+                  <CheckCircle2 size={16} />
+                )}
                 Accept
               </button>
               <button
-                onClick={() => onFeedback(message.answer_id!, "needs_review", "missing_evidence")}
+                className={activeFeedback === "review" ? "selected" : ""}
+                onClick={() => onFeedback(message.answer_id!, "review")}
+                disabled={savingFeedback === "review"}
                 type="button"
               >
-                <AlertTriangle size={16} />
+                {savingFeedback === "review" ? (
+                  <Loader2 className="spin" size={16} />
+                ) : (
+                  <AlertTriangle size={16} />
+                )}
                 Review
               </button>
               <button
-                onClick={() => onFeedback(message.answer_id!, "rejected", "unsupported_claim")}
+                className={activeFeedback === "rejected" ? "selected" : ""}
+                onClick={() => onFeedback(message.answer_id!, "rejected")}
+                disabled={savingFeedback === "rejected"}
                 type="button"
               >
-                <ShieldCheck size={16} />
+                {savingFeedback === "rejected" ? (
+                  <Loader2 className="spin" size={16} />
+                ) : (
+                  <ShieldCheck size={16} />
+                )}
                 Reject
               </button>
             </div>
-            {feedbackState && <span className="feedback-state">{feedbackState}</span>}
+            {(feedbackMessage || feedbackError || savingFeedback) && (
+              <span className={`feedback-state ${feedbackError ? "error-text" : ""}`}>
+                {feedbackError || (savingFeedback ? "Saving decision..." : feedbackMessage)}
+              </span>
+            )}
           </>
         )}
 
@@ -796,6 +867,71 @@ function formatMessageTime(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function getAssistantLabel(model?: string | null, demoMode = false) {
+  if (demoMode || model === "demo-local") return "DocPilot Demo";
+  return "DocPilot AI";
+}
+
+function formatLimitations(rawLimits?: string[] | string | null) {
+  const rawItems = Array.isArray(rawLimits) ? rawLimits : rawLimits ? [rawLimits] : [];
+  return rawItems
+    .flatMap(splitLimitationText)
+    .map(cleanLimitationText)
+    .filter(Boolean);
+}
+
+function splitLimitationText(value: string) {
+  return value
+    .replace(/\r/g, "\n")
+    .replace(/\s+(no\s+(?:direct|definitive|documented|supporting|positive|clear)\b)/gi, "\n$1")
+    .split(/\n|;|(?:^|\s)[\-•]\s+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function cleanLimitationText(value: string) {
+  const lowerValue = value.toLowerCase();
+  if (
+    !lowerValue ||
+    lowerValue === "none" ||
+    lowerValue === "n/a" ||
+    lowerValue === "no limitations" ||
+    lowerValue === "no meaningful limitations"
+  ) {
+    return "";
+  }
+
+  let cleaned = value
+    .replace(/^\s*[-•]\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  cleaned = cleaned.replace(/\s+provided$/i, " are provided");
+  cleaned = cleaned.replace(/\s+documented$/i, " are documented");
+  cleaned = cleaned.replace(
+    /^no definitive wound infection symptoms such as (.+)$/i,
+    "No definitive wound infection symptoms, such as $1, are documented"
+  );
+  cleaned = cleaned.replace(
+    /^no direct diagnostic evidence for (.+)$/i,
+    "No direct diagnostic evidence confirms $1"
+  );
+  cleaned = cleaned.replace(
+    /^no direct signs of atelectasis provided$/i,
+    "No direct signs of atelectasis are provided"
+  );
+  cleaned = cleaned.replace(/^no documented (.+)$/i, (_, item: string) => {
+    return `${item.charAt(0).toUpperCase()}${item.slice(1)} are not documented`;
+  });
+  cleaned = cleaned.replace(
+    /^no positive culture results yet$/i,
+    "Culture results are not yet positive"
+  );
+
+  cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  if (!/[.!?]$/.test(cleaned)) cleaned += ".";
+  return cleaned;
 }
 
 function BenchmarkPanel({
